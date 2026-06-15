@@ -1,0 +1,74 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima en {{ city }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="weather-bg {% if 'torment' in weather.description %}storm-bg{% elif 'lluv' in weather.description %}rain-bg{% elif 'nube' in weather.description or 'nuboso' in weather.description or 'nublado' in weather.description %}cloudy-bg{% elif 'niev' in weather.description %}snow-bg{% elif 'niebla' in weather.description or 'neblina' in weather.description or 'bruma' in weather.description %}fog-bg{% elif 'viento' in weather.description %}windy-bg{% else %}clear-bg{% endif %}">
+    {# Selección de vídeo de fondo según la descripción (usa archivos en static/videos) #}
+    {% set desc = (weather.description or '')|lower %}
+    {% if 'lluv' in desc %}
+        {% set bg = 'lluvia.mov' %}
+    {% elif 'torment' in desc %}
+        {% set bg = 'tormenta.mov' %}
+    {% elif 'nube' in desc or 'nuboso' in desc or 'nublado' in desc %}
+        {% set bg = 'nuboso.mov' %}
+    {% elif 'niev' in desc %}
+        {% set bg = 'nieve.mp4' %}
+    {% elif 'sol' in desc or 'despejado' in desc or 'claro' in desc %}
+        {% set bg = 'sol.mov' %}
+    {% elif 'parcial' in desc or 'sol-nube' in desc %}
+        {% set bg = 'sol-nube.mov' %}
+    {% elif 'viento' in desc %}
+        {% set bg = 'tierra.mp4' %}
+    {% else %}
+        {% set bg = 'tierra.mp4' %}
+    {% endif %}
+
+    <div class="video-bg-wrapper">
+        <video autoplay muted loop playsinline class="bg-video">
+            {% if bg.endswith('.mp4') %}
+                <source src="{{ url_for('static', filename='videos/' ~ bg) }}" type="video/mp4">
+            {% else %}
+                <source src="{{ url_for('static', filename='videos/' ~ bg) }}" type="video/quicktime">
+            {% endif %}
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="weather-container p-4 bg-white rounded shadow-sm w-100">
+            <div class="weather-header text-center mb-4">
+                <h1>Clima en {{ city }}</h1>
+            </div>
+            <div class="weather-info">
+                <div class="weather-item">
+                    <i class="fas fa-temperature-high"></i>
+                    Temperatura: {{ weather.temperature }}°C
+                </div>
+                <div class="weather-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Presión: {{ weather.pressure }} hPa
+                </div>
+                <div class="weather-item">
+                    <i class="fas fa-tint"></i>
+                    Humedad: {{ weather.humidity }}%
+                </div>
+                <div class="weather-item">
+                    <i class="fas fa-wind"></i>
+                    Viento: {{ weather.wind_speed }} m/s
+                </div>
+                <div class="weather-item">
+                    <i class="fas fa-cloud"></i>
+                    Descripción: {{ weather.description }}
+                </div>
+            </div>
+            <a href="/" class="btn btn-primary  w-100">Volver</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
